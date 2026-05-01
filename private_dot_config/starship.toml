@@ -123,6 +123,7 @@ symbol = " "
 
 [hostname]
 ssh_symbol = " "
+ssh_only = false
 
 [java]
 format = '\[[$symbol($version)]($style)\]'
@@ -298,6 +299,7 @@ format = '\[[$time]($style)\]'
 
 [username]
 format = '\[[$user]($style)\]'
+show_always = true
 
 [vagrant]
 format = '\[[$symbol($version)]($style)\]'
