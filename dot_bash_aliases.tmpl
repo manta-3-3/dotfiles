@@ -65,6 +65,7 @@ alias gpom='git push origin main'
 
 alias home="cd ~"
 
+# docker compose
 alias ls_compose="cd /opt/dockge && docker compose ls -a"
 alias config_compose="docker compose config"
 alias start_compose="docker compose up --build -d"
@@ -72,6 +73,11 @@ alias logs_compose="docker compose logs"
 alias pull_compose="docker compose pull"
 alias down_compose="docker compose down"
 
+# docker
 alias containerexec="docker exec -it"
 alias containerlogs="docker logs"
 alias dps='docker ps -a --format "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}"'
+
+# ssh
+alias ssh-forget='ssh-add -D && echo "All SSH-Keys removed."'
+alias ssh-status='ssh-add -l'
