@@ -4,7 +4,7 @@
 alias iad='systemctl is-active docker'
 alias ports='nmap localhost'
 alias dns="sudo systemd-resolve --status | grep 'DNS Servers'"
-#alias bye='shutdown -r now'
+alias bye='sudo shutdown -r now'
 
 ## Usual Instructions  
 alias yep='sudo apt install $1'
@@ -66,18 +66,18 @@ alias gpom='git push origin main'
 alias home='cd ~'
 
 # docker compose
-alias ls_compose='cd /opt/dockge && docker compose ls -a'
-alias config_compose='docker compose config'
-alias start_compose='docker compose up --build -d'
-alias logs_compose='docker compose logs'
-alias pull_compose='docker compose pull'
-alias down_compose='docker compose down'
+alias dcols='(cd /opt/dockge && docker compose ls -a)'
+alias dcoc='docker compose config'
+alias dcou='docker compose up --build -d'
+alias dcol='docker compose logs'
+alias dcop='docker compose pull'
+alias dcod='docker compose down'
 
 # docker
-alias containerexec='docker exec -it'
-alias containerlogs='docker logs'
+alias dexec='docker exec -it'
+alias dlogs='docker logs'
 alias dps='docker ps -a --format "table {{ "{{" }}.ID{{ "}}" }}\t{{ "{{" }}.Names{{ "}}" }}\t{{ "{{" }}.Image{{ "}}" }}\t{{ "{{" }}.Status{{ "}}" }}"'
 
 # ssh
-alias ssh-forget='ssh-add -D && echo "All SSH-Keys removed."'
-alias ssh-status='ssh-add -l'
+alias skf='ssh-add -D && echo "All SSH-Keys removed."'
+alias sks='ssh-add -l'
