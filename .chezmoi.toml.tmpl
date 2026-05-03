@@ -1,0 +1,15 @@
+{{- $git_name := promptStringOnce . "git_name" "Enter Git Username" -}}
+{{- $git_email := promptStringOnce . "git_email" "Enter Git Email" -}}
+
+[data]
+    git_name = {{ $git_name | quote }}
+    git_email = {{ $git_email | quote }}
+
+[edit]
+{{- if eq .chezmoi.os "windows" }}
+    command = "code"
+    args = ["--wait"]
+{{- else }}
+    command = "nano"
+    args = []
+{{- end }}
