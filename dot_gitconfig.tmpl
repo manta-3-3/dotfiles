@@ -1,0 +1,38 @@
+[user]
+	name = {{ .git_name | quote }}
+	email = {{ .git_email | quote }}
+
+[core]
+	autocrlf = false
+{{- if eq .chezmoi.os "windows" }}
+	editor = "code --wait"
+{{- else }}
+	editor = "nano"
+{{- end }}
+
+[push]
+	autoSetupRemote = true
+[fetch]
+	prune = true
+	fsckobjects = true
+[rerere]
+	enabled = true
+[diff]
+	algorithm = histogram
+[init]
+	defaultBranch = main
+[commit]
+	verbose = true
+[transfer]
+	fsckobjects = true
+[receive]
+	fsckObjects = true
+[branch]
+	sort = -committerdate
+[tag]
+	sort = taggerdate
+
+
+# for local git configs only
+[include]
+	path = ~/.gitconfig.local
