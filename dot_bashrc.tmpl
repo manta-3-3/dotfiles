@@ -8,6 +8,9 @@ case $- in
       *) return;;
 esac
 
+# manually added: variable to check if running interactively for later use
+iatest=$(expr index "$-" i)
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -16,8 +19,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=50000
+HISTFILESIZE=50000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -25,10 +28,12 @@ shopt -s checkwinsize
 
 # If set, the pattern "**" used in a pathname expansion context will
 # match all files and zero or more directories and subdirectories.
-#shopt -s globstar
+shopt -s globstar
 
 # make less more friendly for non-text input files, see lesspipe(1)
-#[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+{{- if ne .chezmoi.os "windows" }}
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+{{- end }}
 
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
@@ -76,8 +81,8 @@ esac
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
 
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
@@ -85,7 +90,7 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # colored GCC warnings and errors
-#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # some more ls aliases
 #alias ll='ls -l'
@@ -101,6 +106,11 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
+# manually added: load .bash_functions separately
+if [ -f ~/.bash_functions ]; then
+    . ~/.bash_functions
+fi
+
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -113,6 +123,58 @@ if ! shopt -oq posix; then
 fi
 
 # --------------------------------- manually added by user --------------------------------- #
+# sources:
+# The Ultimate Bad Ass .bashrc File: https://gist.github.com/zachbrowne/8bc414c9f30192067831fafebd14255c#file-the-ultimate-bad-ass-bashrc-file
+# A Quick Guide to My .bashrc Setup: https://dev.to/16bitpaladin/a-quick-guide-to-my-bashrc-setup-292c
+# Bashrc Customization Guide: https://www.freecodecamp.org/news/bashrc-customization-guide/
+# Must know bashrc customizations: https://techguides.yt/guides/linux-server/must-know-bashrc-customizations/
+# ChrisTitusTech's .bashrc Configuration: https://github.com/ChrisTitusTech/mybash/blob/main/.bashrc
+# Become a shell wizard in ~12 mins: https://www.youtube.com/watch?v=IYZDIhfAUM0
+
+#PROMPT_COMMAND='history -a'
+
+# Correct typos in cd
+shopt -s cdspell
+
+# Autocorrect typos in small directory names
+shopt -s dirspell
+
+# Ignore case on auto-completion
+# Note: bind used instead of sticking these in .inputrc
+if [[ $iatest > 0 ]]; then bind "set completion-ignore-case on"; fi
+
+# Show auto-completion list automatically, without double tab
+if [[ $iatest > 0 ]]; then bind "set show-all-if-ambiguous On"; fi
+
+# Bind Ctrl+f to insert 'zi' followed by a newline
+if [[ $iatest > 0 ]]; then bind '"\C-f":"zi\n"'; fi
+
+# show date & time in bash history
+export HISTTIMEFORMAT="%d/%m/%y %T "
+
+# set language
+export LANG=en_GB.UTF-8
+
+# Set the default editor
+export EDITOR=nano
+export VISUAL=nano
+
+# To have colors for ls and all grep commands such as grep, egrep and zgrep
+export CLICOLOR=1
+# use ~/.dircolors instead
+#export LS_COLORS='no=00:fi=00:di=00;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:*.xml=00;31:'
+
+# Color for manpages in less makes manpages a little easier to read
+export LESS_TERMCAP_mb=$'\E[01;31m'
+export LESS_TERMCAP_md=$'\E[01;31m'
+export LESS_TERMCAP_me=$'\E[0m'
+export LESS_TERMCAP_se=$'\E[0m'
+export LESS_TERMCAP_so=$'\E[01;44;33m'
+export LESS_TERMCAP_ue=$'\E[0m'
+export LESS_TERMCAP_us=$'\E[01;32m'
+
+# cd to users directories
+#cd ~
 
 # ------ auto ssh agent setup ------ #
 # https://docs.github.com/en/authentication/connecting-to-github-with-ssh/working-with-ssh-key-passphrases
@@ -142,4 +204,60 @@ unset SSH_TIMEOUT
 unset env
 
 # ------ init starship ------ #
-eval "$(starship init bash)"
+# https://starship.rs/
+
+if command -v starship &> /dev/null; then
+    eval "$(starship init bash)"
+else
+    echo -e "\e[33mWarning: starship not installed!\e[0m" >&2
+fi
+
+# ------ init fastfetch ------ #
+# https://github.com/fastfetch-cli/fastfetch
+
+if command -v fastfetch &> /dev/null; then
+    fastfetch -c all.jsonc
+else
+    echo -e "\e[33mWarning: fastfetch not installed!\e[0m" >&2
+fi
+
+# ------ init fzf ------ #
+# https://github.com/junegunn/fzf
+
+if command -v fzf &> /dev/null; then
+    # fzf layout settings
+    export FZF_DEFAULT_OPTS=$'--color=dark'
+    
+    # CTRL-Y to copy the command into clipboard using pbcopy
+    export FZF_CTRL_R_OPTS="
+      --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+      --color header:italic
+      --header 'Press CTRL-Y to copy command into clipboard'"
+    
+    # TODO: bat needed to be installed
+    # Preview file content using bat (https://github.com/sharkdp/bat)
+    #export FZF_CTRL_T_OPTS="
+    #  --walker-skip .git,node_modules,target
+    #  --preview 'bat -n --color=always {}'
+    #  --bind 'ctrl-/:change-preview-window(down|hidden|)'"
+
+    # TODO: tree needed to be installed
+    # Print tree structure in the preview window
+    #export FZF_ALT_C_OPTS="
+    #  --walker-skip .git,node_modules,target
+    #  --preview 'tree -C {}'"
+
+    # eval fzf
+    eval "$(fzf --bash)"
+else
+    echo -e "\e[33mWarning: fzf not installed!\e[0m" >&2
+fi
+
+# ------ init zoxide ------ #
+# https://github.com/ajeetdsouza/zoxide
+
+if command -v zoxide &> /dev/null; then
+    eval "$(zoxide init bash)"
+else
+    echo -e "\e[33mWarning: zoxide not installed!\e[0m" >&2
+fi

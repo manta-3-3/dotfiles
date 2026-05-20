@@ -1,0 +1,265 @@
+# --------------------------------- sources ---------------------------------:
+# The Ultimate Bad Ass .bashrc File: https://gist.github.com/zachbrowne/8bc414c9f30192067831fafebd14255c#file-the-ultimate-bad-ass-bashrc-file
+# Bashrc Customization Guide: https://www.freecodecamp.org/news/bashrc-customization-guide/
+
+# Check for naming conflicts on current system via command type and package manager apt and local binary files
+confcheck() {
+    local name="$1"
+    if [[ -z "$name" ]]; then
+        echo "Usage: check_conflict <name>"
+        return 1
+    fi
+
+    echo "--- Checking conflict for: '$name' ---"
+
+    # 1. Check with 'type -a' (Finds aliases, functions, builtins, and PATH binaries)
+    echo "[1/3] Shell internal check (type -a):"
+    if type -a "$name" > /dev/null 2>&1; then
+        type -a "$name"
+    else
+        echo "  No internal conflicts found (no alias, function, or binary in PATH)."
+    fi
+
+    # 2. Check for potential package names via apt-cache
+    if command -v apt-cache > /dev/null 2>&1; then
+        echo -e "\n[2/3] Repository check (apt-cache):"
+        if apt-cache show "$name" > /dev/null 2>&1; then
+            echo "  Warning: A package named '$name' exists in the repositories."
+        else
+            echo "  No package named '$name' found in apt repositories."
+        fi
+    fi
+
+    # 3. Check for exact file matches in /usr/bin or /bin (Manual fallback)
+    echo -e "\n[3/3] Direct filesystem check (/usr/bin, /bin):"
+    local paths=("/usr/bin/$name" "/bin/$name" "/usr/local/bin/$name")
+    local found=0
+    for p in "${paths[@]}"; do
+        if [[ -f "$p" ]]; then
+            echo "  Found file: $p"
+            found=1
+        fi
+    done
+    [[ $found -eq 0 ]] && echo "  No direct binary files found in standard locations."
+}
+
+# Sudo last command: do sudo, or sudo the last command if no argument given
+please() {
+    if [[ $# == 0 ]]; then
+        sudo $(history -p '!!')
+    else
+        sudo "$@"
+    fi
+}
+
+# Extracts any archive(s) (if unp isn't installed)
+# see also: https://github.com/xvoland/Extract
+extract() {
+	for archive in $*; do
+		if [ -f $archive ] ; then
+			case $archive in
+				*.tar.bz2)   tar xvjf $archive       ;;
+				*.tar.gz)    tar xvzf $archive       ;;
+				*.bz2)       bunzip2 -v $archive     ;;
+				*.rar)       rar x $archive          ;;
+				*.gz)        gunzip -v $archive      ;;
+				*.tar)       tar xvf $archive        ;;
+				*.tbz2)      tar xvjf $archive       ;;
+				*.tgz)       tar xvzf $archive       ;;
+				*.zip)       unzip -v $archive       ;;
+				*.Z)         uncompress -v $archive  ;;
+				*.7z)        7z x $archive           ;;
+				*)           echo "don't know how to extract '$archive'..." ;;
+			esac
+		else
+			echo "'$archive' is not a valid file!"
+		fi
+	done
+}
+
+# Copy and go to the directory
+cpg() {
+	if [ -d "$2" ];then
+		cp $1 $2 && cd $2
+	else
+		cp $1 $2
+	fi
+}
+
+# Better copying via rsync
+cprs() {
+    # Step 1: Run a dry run to show what will be copied/overwritten
+    echo "=== PREVIEW OF CHANGES ==="
+    rsync -avh --info=progress2 --dry-run "$@"
+    # Step 2: Prompt the user for confirmation
+    echo
+    read -p "Do you want to proceed with these changes? (y/N): " response
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        echo "Starting sync..."
+        rsync -avh --info=progress2 "$@"
+    else
+        echo "Sync cancelled."
+    fi
+}
+
+# Move and go to the directory
+mvg() {
+	if [ -d "$2" ];then
+		mv $1 $2 && cd $2
+	else
+		mv $1 $2
+	fi
+}
+
+# Create and go to the directory
+mkdirg() {
+	mkdir -p $1
+	cd $1
+}
+
+# Goes back a specified number of directories  (i.e. bcd 4)
+bcd() {
+	local d=""
+	local limit=$1
+	for ((i=1 ; i <= limit ; i++))
+		do
+			d=$d/..
+		done
+	d=$(echo $d | sed 's/^\///')
+	if [ -z "$d" ]; then
+		d=..
+	fi
+	cd $d
+}
+
+# Searches for files/folders by name (case-insensitive) in the current directory and custom paths.
+# TODO: better use fd
+fnd() {
+    local search_term="$1"
+    shift
+    find -L . "$@" -iname "*${search_term}*"
+}
+
+# Searches for the given string in all files in current and other directories passed as further arguments
+# TODO: better use ripgrep
+fstr() {
+    local search_term="$1"
+    shift
+    grep -iIHRn --exclude-dir={.git,node_modules} -w -e "$search_term" . "$@"
+}
+
+# TODO: ripgrep, fzf, bat, vim needed to be installed
+# ripgrep->fzf->vim [QUERY] (see: https://junegunn.github.io/fzf/tips/ripgrep-integration/)
+#rfv() {
+#  RELOAD='reload:rg --column --color=always --smart-case {q} || :'
+#  OPENER='if [[ $FZF_SELECT_COUNT -eq 0 ]]; then
+#            vim {1} +{2}     # No selection. Open the current line in Vim.
+#          else
+#            vim +cw -q {+f}  # Build quickfix list for the selected items.
+#          fi'
+#  fzf --disabled --ansi --multi \
+#      --bind "start:$RELOAD" --bind "change:$RELOAD" \
+#      --bind "enter:become:$OPENER" \
+#      --bind "ctrl-o:execute:$OPENER" \
+#      --bind 'alt-a:select-all,alt-d:deselect-all,ctrl-/:toggle-preview' \
+#      --delimiter : \
+#      --preview 'bat --style=full --color=always --highlight-line {2} {1}' \
+#      --preview-window '~4,+{2}+4/3,<80(up)' \
+#      --query "$*"
+#}
+
+# TODO: change function name and and coordinate it with zoxide
+# fzf integration for zoxide (see: https://junegunn.github.io/fzf/examples/directory-navigation/#zoxidehttpsgithubcomajeetdsouzazoxide)
+#zifzf() {
+#  local dir=$(
+#    zoxide query --list --score |
+#    fzf --height 40% --layout reverse --info inline \
+#        --nth 2.. --tac --no-sort --query "$*" \
+#        --bind 'enter:become:echo {2..}'
+#  ) && cd "$dir"
+#}
+
+# TODO: Add a “trashcan” function, such that the file/folder is not completely deleted, but rather placed in a kind of artificial Recycle Bin
+#cn() {
+#	/bin/mv -f –backup=numbered — “$@” $HOME/.local/share/Trash/files ;
+#}
+
+# Create a new (local) git repo
+gnew() {
+    if [ -z "$1" ]; then
+        echo "Error: Please provide a directory name!";
+        return 1;
+    fi
+
+    if mkdir -p "$1"; then
+        cd "$1" || return 1;
+
+        git init;
+
+        touch .gitignore LICENSE;
+
+        if [ ! -s README.md ]; then
+            echo "# $(basename "$PWD")" > README.md;
+        fi
+
+        echo "Project '$(basename "$PWD")' has been successfully created in $PWD!";
+    else
+        echo "Error: The directory could not be created!";
+        return 1;
+    fi
+}
+
+# Show weather infos via https://wttr.in/
+wttr() {
+	curl -G --no-progress-meter --compressed "https://wttr.in/${1:-}?F"
+}
+wttr0() {
+	curl -G --no-progress-meter --compressed "https://wttr.in/${1:-}?F0"
+}
+wttr1() {
+	curl -G --no-progress-meter --compressed "https://wttr.in/${1:-}?F1"
+}
+wttr2() {
+	curl -G --no-progress-meter --compressed "https://wttr.in/${1:-}?F2"
+}
+wttrg() {
+	curl -G --no-progress-meter --compressed "https://v2.wttr.in/${1:-}?F"
+}
+
+# Cheat sheets from https://cheat.sh/
+chtsh() {
+	curl -G --no-progress-meter --compressed "https://cheat.sh/${1:-}"
+}
+
+# Cryptocurrencies exchange rates from https://rate.sx/
+rate() {
+	curl -G --no-progress-meter --compressed "https://chf.rate.sx/${1:-}"
+}
+
+# Generate QR-codes for strings via https://qrenco.de/
+qrco() {
+	if [ -z "${1:-}" ]; then
+		curl -G --no-progress-meter --compressed https://qrenco.de/
+	else
+		echo "$1" | curl -G --no-progress-meter --compressed -F-=\<- https://qrenco.de/
+	fi
+}
+
+# Translate from German <--> English via Translate Shell
+trdeen() {
+	trans -b de:en "$1"
+}
+tren() {
+	trans -b :en "$1"
+}
+trende() {
+	trans -b en:de "$1"
+}
+trde() {
+	trans -b :de "$1"
+}
+
+# Calculator via numbat: https://numbat.dev/
+calcu() {
+	numbat -e "$@"
+}

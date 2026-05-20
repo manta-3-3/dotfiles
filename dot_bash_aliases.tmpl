@@ -1,51 +1,151 @@
-# -------- https://gist.github.com/davidjguru/019beabeac6245959564499db3e45084#file-bash_aliases -------- #
+# --------------------------------- sources ---------------------------------:
+# BASH Aliases commands for a Linux (Debian / Ubuntu) environment: https://gist.github.com/davidjguru/019beabeac6245959564499db3e45084#file-bash_aliases
+# The Ultimate Bad Ass .bashrc File: https://gist.github.com/zachbrowne/8bc414c9f30192067831fafebd14255c#file-the-ultimate-bad-ass-bashrc-file
+
+# To temporarily bypass an alias, we preceed the command with a \
+# EG: the ls command is aliased, but to use the normal ls command you would type \ls
+
+## Alias's to modified commands
+
+### safety net
+alias cp='cp -vi'
+alias mv='mv -vi'
+alias rm='rm -vi'
+
+### others
+alias mkdir='mkdir -p -v'
+alias ps='ps auxf'
+alias less='less -R'
+{{- if eq .chezmoi.os "windows" }}
+alias ping='ping -n 10'
+{{- else }}
+alias ping='ping -c 10'
+{{- end }}
 
 ## Morning Opertures
+alias whatsup='service --status-all'
 alias iad='systemctl is-active docker'
-alias ports='nmap localhost'
+{{- if eq .chezmoi.os "windows" }}
+alias ports='netstat -ano'
+{{- else }}
+alias ports='sudo ss -tulpn'
+{{- end }}
+alias scanme='nmap localhost'
 alias dns="sudo systemd-resolve --status | grep 'DNS Servers'"
 alias bye='sudo shutdown -r now'
+alias bye30='echo "Rebooting in 30 seconds... (Press Ctrl+C to cancel)"; sleep 30 && sudo shutdown -r now'
 
-## Usual Instructions  
-alias yep='sudo apt install $1'
-alias nop='sudo apt remove $1'
+## Usual Instructions
 alias c='clear'
 alias h='history'
-alias hg='history | grep $1'
+alias hg='history | grep $1' # TODO: Maybe it's better to use fzf with Ctrl+R
+alias q='exit'
 alias wg='wget -c '
-alias sup='sudo apt update && sudo apt upgrade'
 
-## Content in folders  
-### Getting info from a position in a folder.
-alias ll='ls -larsh'
-alias lf='ls -alF'
-alias la='ls -A'
-alias lt='ls --human-readable --size -1 -S --classify' 
-alias lh='ls -ahlt'
-alias lu='du -sh * | sort -h'
-alias lt='ls -t -1 -long'
-alias lc='find . -type f | wc -l'
-alias ld='ls -d */'
+## Software Install
+
+{{- if eq .chezmoi.os "windows" }}
+### TODO: winget commands
+alias pkm='winget'
+
+alias sup='winget upgrade --all'
+alias yep='winget install $1'
+alias nop='winget remove $1'
+
+alias lip='winget list'
+alias sep='winget search'
+alias shp='winget show'
+{{- else }}
+### apt commands
+alias pkm='apt'
+
+alias sup='sudo apt update && sudo apt upgrade && sudo apt full-upgrade && sudo apt autoremove && sudo apt autoclean'
+alias yep='sudo apt install $1'
+alias nop='sudo apt remove $1'
+
+alias lip='apt list'
+alias sep='apt search'
+alias shp='apt show'
+{{- end }}
 
 ## Files, folders and resources
-alias fh='find . -name '
+
+### main ls
+alias ll='ls -larshF'
+alias la='ls -larshF -A'
+
+### sorted ls
+alias lss='ls -larshF -S' # sort by size
+alias lx='ls -larshF -X' # sort by extension
+alias lt='ls -larshF -t' # sort by time/date
+alias lc='ls -larshF -c' # sort by change time
+alias lu='ls -larshF -u' # sort by access time
+
+### typespecific ls
+alias lfile="ls -larshF --color=always | grep -v '/$'" # list only files
+alias ldir='ls -larsh -d */' # list only directories
+
+### cd jumps
+alias -- -='cd -'
 alias ..='cd ..'
-alias ....='cd ../..'
-### More Jump down
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
 alias 1d='cd ..'
-alias 2d='cd ..;cd ..'
-alias 3d='cd ..;cd ..;cd ..'
-alias 4d='cd ..;cd ..;cd ..;cd ..'
-alias 5d='cd ..;cd ..;cd ..;cd ..;cd ..'
-alias untar='tar -zxvf $1'
-alias tar='tar -czvf $1'
-alias mnt="mount | awk -F' ' '{ printf \"%s\t%s\n\",\$1,\$3; }' | column -t | egrep ^/dev/ | sort"
-alias df='df -Tha --total'
-alias exp='nautilus .'
-alias std="stat -c '%y - %n' * | sort -r -t'-' -k1,1"
-  ## Gets a list of files ordered by date.
+alias 2d='cd ../..'
+alias 3d='cd ../../..'
+alias 4d='cd ../../../..'
+alias 5d='cd ../../../../..'
+
+### modifications
+alias deldir='rm -r'
+
+### storage usage
+alias dus='du -ahc -d 1 | sort -h'
+alias du10='du -ah . | sort -hr | head -n 10 | sort -h'
+
+alias dfs='df -ahT --total'
+
+alias cntf='find . -type f | wc -l'
+alias cnta="find . -mindepth 1 -printf '%y\n' | sort | uniq -c | sed -E 's/ f$/ Files/; s/ d$/ Dirs/; s/ l$/ Links/; s/ p$/ Pipes/; s/ s$/ Sockets/; s/ c$/ CharDevs/; s/ b$/ BlockDevs/' | sort -n"
+
+### TODO: show directory structures in a hierarchical, tree-like format
+#alias treea='tree -CAhF --dirsfirst'
+#alias treed='tree -CAFd'
+
+### archiving and compressing
+alias mktar='tar -c -vf'
+alias mkbz2='tar -c -j -vf'
+alias mkgz='tar -c -z -vf'
+
+alias untar='tar -x -vf'
+#alias unbz2='tar -x -j -vf'
+#alias ungz='tar -x -z -vf'
+
+### TODO: others
+#alias mnt="mount | awk -F' ' '{ printf \"%s\t%s\n\",\$1,\$3; }' | column -t | egrep ^/dev/ | sort"
+#alias exp='nautilus .'
+#alias std="stat -c '%y - %n' * | sort -r -t'-' -k1,1"
+
+## permissions
+
+### chmod commands
+alias chmx='chmod -c a+x'
+alias chm000='chmod -cR 000'
+alias chm644='chmod -cR 644'
+alias chm666='chmod -cR 666'
+alias chm755='chmod -cR 755'
+alias chm777='chmod -cR 777'
+
+### chown commands
+alias chome='chown -cR $USER:$USER'
+alias choroot='sudo chown -cR root:root'
 
 ## Git Related Aliases
+
+alias g='git'
+
 ### Basic info
 alias gs='git status'
 alias gb='git branch'
@@ -58,14 +158,45 @@ alias gld='git log –oneline –decorate –graph –all'
 alias glp="git log -g --grep='PHP' -10 --pretty='%h - %s - %cn - %cd'"
 alias glf='git for-each-ref --sort=-committerdate'
 
-### Pushing to basic branches
+### others git
+alias gcl='git clone'
+alias gf='git fetch'
+alias gpl='git pull'
+alias gaa='git add .'
+alias gcm='git commit -m'
 alias gpom='git push origin main'
 
-# -------- others -------- #
+## Other Aliases
 
+### cd important directories
+alias root='cd /'
 alias home='cd ~'
 
-# docker compose
+### add an "alert" alias for long running commands. Use like so: sleep 10; alert
+{{- if eq .chezmoi.os "windows" }}
+alias alert='echo -e "\a"'
+{{- else }}
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+{{- end }}
+
+### open files/folders in standart
+{{- if eq .chezmoi.os "windows" }}
+alias open='start ""'
+{{- else }}
+alias open='xdg-open'
+{{- end }}
+
+### nano
+alias nn='nano'
+alias snn='sudo nano'
+
+### tmux
+alias tm='tmux'
+alias tmn='tmux new -s'
+alias tma='tmux attach -t'
+alias tml='tmux ls'
+
+### docker compose
 alias dcols='(cd /opt/dockge && docker compose ls -a)'
 alias dcoc='docker compose config'
 alias dcou='docker compose up --build -d'
@@ -73,11 +204,33 @@ alias dcol='docker compose logs'
 alias dcop='docker compose pull'
 alias dcod='docker compose down'
 
-# docker
-alias dexec='docker exec -it'
-alias dlogs='docker logs'
-alias dps='docker ps -a --format "table {{ "{{" }}.ID{{ "}}" }}\t{{ "{{" }}.Names{{ "}}" }}\t{{ "{{" }}.Image{{ "}}" }}\t{{ "{{" }}.Status{{ "}}" }}"'
+### docker
+alias dk='docker'
+alias dkex='docker exec -it'
+alias dklogs='docker logs'
+alias dkps='docker ps -a --format "table {{ "{{" }}.ID{{ "}}" }}\t{{ "{{" }}.Names{{ "}}" }}\t{{ "{{" }}.Image{{ "}}" }}\t{{ "{{" }}.Status{{ "}}" }}"'
+alias dksp='docker system prune'
 
-# ssh
-alias skf='ssh-add -D && echo "All SSH-Keys removed."'
+### ssh
 alias sks='ssh-add -l'
+alias skf='ssh-add -D && echo "All SSH-Keys removed."'
+
+### chezmoi
+alias cz='chezmoi'
+alias czad='chezmoi add'
+alias czdi='chezmoi diff'
+alias czap='chezmoi apply'
+
+### ncal: show the calendar: last, current and next month
+alias caln='ncal -3 -w'
+
+### fzf integrations
+{{- if eq .chezmoi.os "windows" }}
+alias fzfman='compgen -c | fzf | xargs -I {} sh -c "{} --help | less"'
+{{- else }}
+alias fzfman='compgen -c | fzf | xargs man'
+{{- end }}
+alias fzfgcb="git branch | fzf --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 40% --layout reverse"
+
+### TODO: paste clipboard contents as keystrokes to whatever location you click
+#alias clickpaste='sleep 3; xdotool type --delay 10 "$(xclip -o -selection clipboard)"'
