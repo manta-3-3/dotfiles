@@ -1,11 +1,28 @@
-{{- $git_name := promptStringOnce . "git_name" "Enter Git Username" -}}
-{{- $git_email := promptStringOnce . "git_email" "Enter Git Email" -}}
-{{- $is_headless := promptBoolOnce . "is_headless" "Does this system run headless (without a GUI), answer with true/false?" false -}}
+{{- /* Ask a few general things */ -}}
+{{- $git_name := promptStringOnce . "git_name" "Enter \033[1;31m Git Username \033[0m" -}}
+{{- $git_email := promptStringOnce . "git_email" "Enter \033[1;31m Git Email \033[0m" -}}
+{{- $is_headless := promptBoolOnce . "is_headless" "Does this system run \033[1;31m headless \033[0m (without a GUI), answer with true/false?" false -}}
+
+{{- /* Ask which subgroups to install */ -}}
+{{- /*
+  If you ever add a new subgroup to your YAML (e.g., subgroupname), just add an install_subgroupname prompt here.
+  The installation scripts are built to detect these variables dynamically!
+  Note: Subgroups that don't have a prompt (like 'core') will default to true in our scripts!
+*/ -}}
+{{- $install_terminal := promptBoolOnce . "install_terminal" "Install \033[1;31m terminal tools \033[0m on this machine, answer with true/false?" true -}}
+{{- $install_gui := promptBoolOnce . "install_gui" "Install \033[1;31m GUI tools \033[0m on this machine, answer with true/false?" false -}}
+{{- $install_gaming := promptBoolOnce . "install_gaming" "Install \033[1;31m gaming tools \033[0m on this machine, answer with true/false?" false -}}
 
 [data]
+    # General things
     git_name = {{ $git_name | quote }}
     git_email = {{ $git_email | quote }}
     is_headless = {{ $is_headless }}
+
+    # Subgroups to install
+    install_terminal = {{ $install_terminal }}
+    install_gui = {{ $install_gui }}
+    install_gaming = {{ $install_gaming }}
 
 [edit]
 {{- if eq .chezmoi.os "windows" }}

@@ -1,0 +1,41 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+set -euo pipefail
+
+# Magic comment to re-run script when packages.yaml changes:
+# packages.yaml hash: {{ include ".chezmoidata/packages.yaml" | sha256sum }}
+
+{{ if hasKey .packages.linux "apt" -}}
+if command -v apt-get >/dev/null 2>&1; then
+    echo "--- Detected APT package manager ---"
+    
+    {{- range $group, $packages := .packages.linux.apt }}
+    {{- /* Dynamically check if the group is enabled in .chezmoi.toml.tmpl */ -}}
+    {{- $configKey := printf "install_%s" $group }}
+    {{- $installGroup := true }}
+    {{- if hasKey $ $configKey }}{{ $installGroup = index $ $configKey }}{{ end }}
+
+    {{- if $installGroup }}
+    echo "Checking group: {{ $group }}..."
+    
+    {{- range $package := $packages }}
+    # Check if package is already installed
+    if ! dpkg-query -W -f='${Status}' "{{ $package }}" 2>/dev/null | grep -q "ok installed"; then
+        read -p "  > '{{ $package }}' is missing. Install it? [Y/n] " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+            sudo apt-get install -y "{{ $package }}"
+        else
+            echo "  > Skipped {{ $package }}"
+        fi
+    fi
+    {{- end }}
+    
+    {{- else }}
+    echo "Skipping group: {{ $group }} (Disabled during 'chezmoi init')"
+    {{- end }}
+    {{- end }}
+fi
+{{- end }}
+
+{{- end -}}

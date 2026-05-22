@@ -1,0 +1,88 @@
+packages:
+  windows:
+    winget:
+      core:
+        - "twpayne.chezmoi"
+        - "Git.Git"
+        - "Docker.DockerDesktop"
+      terminal:
+        # Bash
+        - "Starship.Starship"
+        - "Fastfetch-cli.Fastfetch"
+        - "junegunn.fzf"
+        - "ajeetdsouza.zoxide"
+        # Others
+      gui:
+        - "Spotify.Spotify"
+        - "DominikReichl.KeePass"
+        - "Mozilla.Thunderbird"
+        - "cjpais.Handy"
+        # Productivity / Notes
+        - "Notion.Notion"
+        - "Obsidian.Obsidian"
+        # Browsers
+        - "Mozilla.Firefox"
+        - "Google.Chrome"
+        # Text editors
+        - "Microsoft.VisualStudioCode"
+        - "Notepad++.Notepad++"
+        # Image/video editors
+        - "GIMP.GIMP"
+        - "Inkscape.Inkscape"
+        - "BlenderFoundation.Blender"
+        # File explorer / Viewer/player
+        - "MilosParipovic.OneCommander"
+        - "AntibodySoftware.WizTree"
+        - "FastStone.Viewer"
+        - "VideoLAN.VLC"
+        # Recording
+        - "OBSProject.OBSStudio"
+        - "Audacity.Audacity"
+      gaming:
+        - "EpicGames.EpicGamesLauncher"
+        - "Valve.Steam"
+  linux:
+    apt:
+      core:
+        # chezmoi install differently
+        - git
+        # docker install differently
+        - curl
+        - wget
+        - grep
+        - less
+        - rsync
+        - tmux
+        # Extraction
+        - tar
+        - unzip
+        # Text editors
+        - nano
+        - neovim
+        # System resource monitor
+        - htop
+        - btop
+        - ncdu
+        # Security
+        - ufw
+        - nmap
+        - fail2ban
+        # Other packete managers
+        - snapd
+        # Others
+        - ca-certificates
+        - gnupg
+        - lsb-release
+        #- apt-transport-https
+      terminal:
+        # Bash
+        - starship
+        - fastfetch
+        - fzf
+        - zoxide
+        # Others
+        - ncal
+        - translate-shell
+        - numbat
+      gui:
+        - vlc

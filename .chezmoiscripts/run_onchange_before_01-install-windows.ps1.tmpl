@@ -1,0 +1,41 @@
+{{- if eq .chezmoi.os "windows" -}}
+
+# Magic comment to re-run script when packages.yaml changes:
+# packages.yaml hash: {{ include ".chezmoidata/packages.yaml" | sha256sum }}
+
+Write-Host "--- Checking Windows packages via Winget ---" -ForegroundColor Cyan
+
+{{- range $group, $packages := .packages.windows.winget }}
+    {{- $configKey := printf "install_%s" $group }}
+    {{- $installGroup := true }}
+    {{- if hasKey $ $configKey }}{{ $installGroup = index $ $configKey }}{{ end }}
+
+    {{- if $installGroup }}
+    Write-Host "Checking group: {{ $group }}..." -ForegroundColor Blue
+    
+    {{- range $package := $packages }}
+    # Check if Winget recognizes it as installed
+    $check = winget list --exact --id "{{ $package }}" 2>&1
+    if ($LASTEXITCODE -ne 0 -or $check -match "No installed package found") {
+        
+        $yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes", "Install"
+        $no = New-Object System.Management.Automation.Host.ChoiceDescription "&No", "Skip"
+        $options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
+        
+        $result = $host.ui.PromptForChoice("Install Software", "'{{ $package }}' is missing. Install it?", $options, 0)
+        
+        if ($result -eq 0) {
+            Write-Host "  > Installing {{ $package }}..."
+            winget install --exact --id "{{ $package }}" -e --accept-package-agreements --accept-source-agreements
+        } else {
+            Write-Host "  > Skipped {{ $package }}" -ForegroundColor Yellow
+        }
+    }
+    {{- end }}
+    
+    {{- else }}
+    Write-Host "Skipping group: {{ $group }} (Disabled during 'chezmoi init')" -ForegroundColor DarkGray
+    {{- end }}
+{{- end }}
+
+{{- end -}}
