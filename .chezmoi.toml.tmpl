@@ -11,6 +11,7 @@
 */ -}}
 {{- $install_terminal := promptBoolOnce . "install_terminal" "Install \033[1;31m terminal tools \033[0m on this machine, answer with true/false?" true -}}
 {{- $install_gui := promptBoolOnce . "install_gui" "Install \033[1;31m GUI tools \033[0m on this machine, answer with true/false?" false -}}
+{{- $install_peripherals := promptBoolOnce . "install_peripherals" "Install \033[1;31m peripherals tools \033[0m on this machine, answer with true/false?" false -}}
 {{- $install_gaming := promptBoolOnce . "install_gaming" "Install \033[1;31m gaming tools \033[0m on this machine, answer with true/false?" false -}}
 
 [data]
@@ -22,7 +23,11 @@
     # Subgroups to install
     install_terminal = {{ $install_terminal }}
     install_gui = {{ $install_gui }}
+    install_peripherals = {{ $install_peripherals }}
     install_gaming = {{ $install_gaming }}
+
+[diff]
+    exclude = ["scripts"]
 
 [edit]
 {{- if eq .chezmoi.os "windows" }}

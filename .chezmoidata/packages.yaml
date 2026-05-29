@@ -12,32 +12,51 @@ packages:
         - "junegunn.fzf"
         - "ajeetdsouza.zoxide"
         # Others
+        - "BurntSushi.ripgrep.MSVC"
+        - "sharkdp.fd"
+        - "sharkdp.bat"
+        - "sxyazi.yazi"
+        - "GitHub.cli"
+        #- "jqlang.jq"
       gui:
         - "Spotify.Spotify"
         - "DominikReichl.KeePass"
         - "Mozilla.Thunderbird"
         - "cjpais.Handy"
+        # Terminal emulators / Multiplexers
+        - "Alacritty.Alacritty"
+        - "Microsoft.WindowsTerminal"
+        #- "wez.wezterm"
+        - "Zellij.Zellij"
         # Productivity / Notes
         - "Notion.Notion"
         - "Obsidian.Obsidian"
         # Browsers
         - "Mozilla.Firefox"
         - "Google.Chrome"
+        - "Brave.Brave"
         # Text editors
         - "Microsoft.VisualStudioCode"
         - "Notepad++.Notepad++"
+        - "Neovim.Neovim"
         # Image/video editors
         - "GIMP.GIMP"
         - "Inkscape.Inkscape"
         - "BlenderFoundation.Blender"
         # File explorer / Viewer/player
         - "MilosParipovic.OneCommander"
+        - "voidtools.Everything"
         - "AntibodySoftware.WizTree"
         - "FastStone.Viewer"
         - "VideoLAN.VLC"
         # Recording
         - "OBSProject.OBSStudio"
         - "Audacity.Audacity"
+        # VPN
+        - "Tailscale.Tailscale"
+        - "OpenVPNTechnologies.OpenVPNConnect"
+      peripherals:
+        - "TurtleBeach.ROCCATSwarm"
       gaming:
         - "EpicGames.EpicGamesLauncher"
         - "Valve.Steam"
@@ -76,13 +95,48 @@ packages:
         #- apt-transport-https
       terminal:
         # Bash
+        - bash-completion
         - starship
         - fastfetch
         - fzf
         - zoxide
         # Others
+        - ripgrep
+        - fd-find
+        - bat
+        #- yazi
+        - gh
         - ncal
         - translate-shell
         - numbat
+        #- jq
+        #- pass
       gui:
+        - thunderbird
+        # Terminal emulators / Multiplexers
+        - alacritty
+        # Productivity / Notes
+        # Browsers
+        - firefox
+        # brave-browser install differently
+        # Text editors
+        # Image/video editors
+        - gimp
+        - inkscape
+        - blender
+        # File explorer / Viewer/player
         - vlc
+        # Recording
+        - audacity
+        # VPN
+software-backlog:
+  - "C Bonsai"
+  - "Asciinema"
+  - "Croc"
+  - "TTYD"
+  - "Jrnl"
+  - "Newsboat"
+  - "figlet"
+  - "Lolcat"
+  - "Faker"
+  - "Grex"

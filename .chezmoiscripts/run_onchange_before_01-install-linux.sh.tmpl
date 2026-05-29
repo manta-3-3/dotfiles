@@ -1,38 +1,56 @@
 {{- if eq .chezmoi.os "linux" -}}
 #!/bin/bash
-set -euo pipefail
+# We keep -u (undefined vars) and -o pipefail, but remove -e so the script
+# doesn't instantly die on every minor command failure.
+set -uo pipefail
 
-# Magic comment to re-run script when packages.yaml changes:
+# --- Color Definitions ---
+CYAN='\033[1;36m'
+BLUE='\033[1;34m'
+GREEN='\033[1;32m'
+YELLOW='\033[1;33m'
+RED='\033[1;31m'
+NC='\033[0m' # No Color
+
 # packages.yaml hash: {{ include ".chezmoidata/packages.yaml" | sha256sum }}
 
 {{ if hasKey .packages.linux "apt" -}}
 if command -v apt-get >/dev/null 2>&1; then
-    echo "--- Detected APT package manager ---"
+    echo -e "\n${CYAN}==========================================${NC}"
+    echo -e "${CYAN}   Detected APT package manager (Linux)   ${NC}"
+    echo -e "${CYAN}==========================================${NC}"
     
     {{- range $group, $packages := .packages.linux.apt }}
-    {{- /* Dynamically check if the group is enabled in .chezmoi.toml.tmpl */ -}}
     {{- $configKey := printf "install_%s" $group }}
     {{- $installGroup := true }}
     {{- if hasKey $ $configKey }}{{ $installGroup = index $ $configKey }}{{ end }}
 
     {{- if $installGroup }}
-    echo "Checking group: {{ $group }}..."
+    echo -e "\n${BLUE}▶ Checking group: [ ${group} ]...${NC}"
     
     {{- range $package := $packages }}
     # Check if package is already installed
     if ! dpkg-query -W -f='${Status}' "{{ $package }}" 2>/dev/null | grep -q "ok installed"; then
-        read -p "  > '{{ $package }}' is missing. Install it? [Y/n] " -n 1 -r
+        echo -e "${YELLOW}  ⚠ '${package}' is missing.${NC}"
+        read -p "$(echo -e "    Install it? [Y/n] ")" -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
-            sudo apt-get install -y "{{ $package }}"
+            echo -e "    ⚙ Installing ${package}..."
+            
+            # Error handling: Catch the exit code of apt-get
+            if sudo apt-get install -y "{{ $package }}"; then
+                echo -e "${GREEN}    ✓ Successfully installed ${package}${NC}"
+            else
+                echo -e "${RED}    ✗ Failed to install ${package}. Moving to next package...${NC}"
+            fi
         else
-            echo "  > Skipped {{ $package }}"
+            echo -e "${YELLOW}    ⊘ Skipped ${package}${NC}"
         fi
     fi
     {{- end }}
     
     {{- else }}
-    echo "Skipping group: {{ $group }} (Disabled during 'chezmoi init')"
+    echo -e "\n${YELLOW}⏭ Skipping group: [ ${group} ] (Disabled during 'chezmoi init')${NC}"
     {{- end }}
     {{- end }}
 fi
