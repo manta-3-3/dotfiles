@@ -146,6 +146,9 @@ if [[ $iatest > 0 ]]; then bind "set completion-ignore-case on"; fi
 # Show auto-completion list automatically, without double tab
 if [[ $iatest > 0 ]]; then bind "set show-all-if-ambiguous On"; fi
 
+# Cycle through completions with successive TAB presses
+if [[ $iatest > 0 ]]; then bind '"\C-i": menu-complete'; fi
+
 # Bind Ctrl+f to zoxide insert 'zi' followed by a newline
 if [[ $iatest > 0 ]]; then bind '"\C-f":"zi\n"'; fi
 
@@ -234,19 +237,18 @@ if command -v fzf &> /dev/null; then
       --color header:italic
       --header 'Press CTRL-Y to copy command into clipboard'"
     
-    # TODO: bat needed to be installed
     # Preview file content using bat (https://github.com/sharkdp/bat)
-    #export FZF_CTRL_T_OPTS="
-    #  --walker-skip .git,node_modules,target
-    #  --preview 'bat -n --color=always {}'
-    #  --bind 'ctrl-/:change-preview-window(down|hidden|)'"
-
+    export FZF_CTRL_T_OPTS="
+      --walker-skip .git,node_modules,target
+      --preview 'bat -n --color=always {}'
+      --bind 'ctrl-/:change-preview-window(down|hidden|)'"
+    
     # TODO: tree needed to be installed
     # Print tree structure in the preview window
     #export FZF_ALT_C_OPTS="
     #  --walker-skip .git,node_modules,target
     #  --preview 'tree -C {}'"
-
+    
     # eval fzf
     eval "$(fzf --bash)"
 else

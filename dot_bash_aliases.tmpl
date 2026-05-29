@@ -11,6 +11,7 @@
 alias cp='cp -vi'
 alias mv='mv -vi'
 alias rm='rm -vi'
+alias ln='ln -vi'
 
 ### others
 alias mkdir='mkdir -p -v'
@@ -38,7 +39,7 @@ alias bye30='echo "Rebooting in 30 seconds... (Press Ctrl+C to cancel)"; sleep 3
 ## Usual Instructions
 alias c='clear'
 alias h='history'
-alias hg='history | grep $1' # TODO: Maybe it's better to use fzf with Ctrl+R
+alias hg='history | grep' # TODO: Maybe it's better to use fzf with Ctrl+R
 alias q='exit'
 alias wg='wget -c '
 
@@ -49,9 +50,9 @@ alias wg='wget -c '
 alias pkm='winget'
 
 alias sup='winget upgrade --all'
-# add a command to upgrade specific package
-alias yep='winget install $1'
-alias nop='winget remove $1'
+# TODO: add a command to upgrade specific package
+alias yep='winget install'
+alias nop='winget remove'
 
 alias lip='winget list'
 alias sep='winget search'
@@ -61,8 +62,8 @@ alias shp='winget show'
 alias pkm='apt'
 
 alias sup='sudo apt update && sudo apt upgrade && sudo apt full-upgrade && sudo apt autoremove && sudo apt autoclean'
-alias yep='sudo apt install $1'
-alias nop='sudo apt remove $1'
+alias yep='sudo apt install'
+alias nop='sudo apt remove'
 
 alias lip='apt list'
 alias sep='apt search'
@@ -166,6 +167,7 @@ alias gpl='git pull'
 alias gaa='git add .'
 alias gcm='git commit -m'
 alias gpom='git push origin main'
+alias gcbi="git branch | fzf --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 40% --layout reverse" # change the branch interactive via fzf
 
 ## Other Aliases
 
@@ -187,6 +189,13 @@ alias open='start ""'
 alias open='xdg-open'
 {{- end }}
 
+### man interactive via fzf
+{{- if eq .chezmoi.os "windows" }}
+alias mani='compgen -c | fzf | xargs -I {} sh -c "{} --help | less"'
+{{- else }}
+alias mani='compgen -c | fzf | xargs man'
+{{- end }}
+
 ### nano
 alias nn='nano'
 alias snn='sudo nano'
@@ -198,6 +207,7 @@ alias tma='tmux attach -t'
 alias tml='tmux ls'
 
 ### docker compose
+alias dco='docker compose'
 alias dcols='(cd /opt/dockge && docker compose ls -a)'
 alias dcoc='docker compose config'
 alias dcou='docker compose up --build -d'
@@ -207,12 +217,17 @@ alias dcod='docker compose down'
 
 ### docker
 alias dk='docker'
-alias dkex='docker exec -it'
-alias dklogs='docker logs'
 alias dkps='docker ps -a --format "table {{ "{{" }}.ID{{ "}}" }}\t{{ "{{" }}.Names{{ "}}" }}\t{{ "{{" }}.Image{{ "}}" }}\t{{ "{{" }}.Status{{ "}}" }}"'
+alias dklogs='docker logs'
+alias dklogsi='docker ps -a --format "table {{ "{{" }}.ID{{ "}}" }}\t{{ "{{" }}.Names{{ "}}" }}\t{{ "{{" }}.Image{{ "}}" }}\t{{ "{{" }}.Status{{ "}}" }}" | sed 1d | fzf --height 40% --layout reverse --header="Select container to see logs" --bind "enter:become(docker logs {1})"'
+alias dkex='docker exec -it'
+alias dkexi='docker ps -a --format "table {{ "{{" }}.ID{{ "}}" }}\t{{ "{{" }}.Names{{ "}}" }}\t{{ "{{" }}.Image{{ "}}" }}\t{{ "{{" }}.Status{{ "}}" }}" | sed 1d | fzf --height 40% --layout reverse --header="Select container to exec into" --bind "enter:become(docker exec -it {1} sh)"'
 alias dksp='docker system prune'
 
 ### ssh
+alias skck='for key in id_ed25519 id_rsa id_ecdsa id_dsa; do [ -f ~/.ssh/$key ] && echo "Found: $key (Private)" && [ -f ~/.ssh/$key.pub ] && echo "Found: $key.pub (Public)"; done; true'
+alias skg='ssh-keygen -t ed25519'
+alias skcp='ssh-copy-id'
 alias sks='ssh-add -l'
 alias skf='ssh-add -D && echo "All SSH-Keys removed."'
 
@@ -224,14 +239,6 @@ alias czap='chezmoi apply'
 
 ### ncal: show the calendar: last, current and next month
 alias caln='ncal -3 -w'
-
-### fzf integrations
-{{- if eq .chezmoi.os "windows" }}
-alias fzfman='compgen -c | fzf | xargs -I {} sh -c "{} --help | less"'
-{{- else }}
-alias fzfman='compgen -c | fzf | xargs man'
-{{- end }}
-alias fzfgcb="git branch | fzf --preview 'git show --color=always {-1}' --bind 'enter:become(git checkout {-1})' --height 40% --layout reverse"
 
 ### TODO: paste clipboard contents as keystrokes to whatever location you click
 #alias clickpaste='sleep 3; xdotool type --delay 10 "$(xclip -o -selection clipboard)"'
