@@ -1,23 +1,25 @@
 {{- if eq .chezmoi.os "windows" -}}
 # packages.yaml hash: {{ include ".chezmoidata/packages.yaml" | sha256sum }}
 
-Write-Host "`n==========================================" -ForegroundColor Cyan
-Write-Host "   Checking Windows packages via Winget   " -ForegroundColor Cyan
-Write-Host "==========================================" -ForegroundColor Cyan
-
-{{- range $group, $packages := .packages.windows.winget }}
+{{ if hasKey .packages.windows "winget" -}}
+if (Get-Command winget -ErrorAction SilentlyContinue) {
+    Write-Host "`n==========================================" -ForegroundColor Cyan
+    Write-Host "   Detected Winget package manager (Windows)   " -ForegroundColor Cyan
+    Write-Host "==========================================" -ForegroundColor Cyan
+    
+    {{- range $group, $packages := .packages.windows.winget }}
     {{- $configKey := printf "install_%s" $group }}
     {{- $installGroup := true }}
     {{- if hasKey $ $configKey }}{{ $installGroup = index $ $configKey }}{{ end }}
-
+    
     {{- if $installGroup }}
     Write-Host "`n▶ Checking group: [ {{ $group }} ]..." -ForegroundColor Blue
     
     {{- range $package := $packages }}
     # Check if Winget recognizes it as installed
-    $check = winget list --exact --id "{{ $package }}" 2>&1
-    if ($LASTEXITCODE -ne 0 -or $check -match "No installed package found") {
-        
+    $null = winget list --exact --id "{{ $package }}" 2>&1
+    $TargetExitCode = $LASTEXITCODE
+    if ($TargetExitCode -ne 0) {
         Write-Host "  ⚠ '{{ $package }}' is missing." -ForegroundColor Yellow
         $response = Read-Host "    Install it? [Y/n]"
         
@@ -41,6 +43,8 @@ Write-Host "==========================================" -ForegroundColor Cyan
     {{- else }}
     Write-Host "`n⏭ Skipping group: [ {{ $group }} ] (Disabled during 'chezmoi init')" -ForegroundColor DarkGray
     {{- end }}
+    {{- end }}
+}
 {{- end }}
 
 {{- end -}}
