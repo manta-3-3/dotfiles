@@ -1,0 +1,59 @@
+{{- if eq .chezmoi.os "windows" -}}
+#!/bin/bash
+# We keep -u (undefined vars) and -o pipefail, but remove -e so the script
+# doesn't instantly die on every minor command failure.
+set -uo pipefail
+
+# --- Color Definitions ---
+CYAN='\033[1;36m'
+BLUE='\033[1;34m'
+GREEN='\033[1;32m'
+YELLOW='\033[1;33m'
+RED='\033[1;31m'
+NC='\033[0m' # No Color
+
+# packages.yaml hash: {{ include ".chezmoidata/packages.yaml" | sha256sum }}
+
+{{ if hasKey .packages.windows "winget" -}}
+if command -v winget >/dev/null 2>&1; then
+    echo -e "\n${CYAN}==========================================${NC}"
+    echo -e "${CYAN}   Detected Winget package manager (Windows)   ${NC}"
+    echo -e "${CYAN}==========================================${NC}"
+    
+    {{- range $group, $packages := .packages.windows.winget }}
+    {{- $configKey := printf "install_%s" $group }}
+    {{- $installGroup := true }}
+    {{- if hasKey $ $configKey }}{{ $installGroup = index $ $configKey }}{{ end }}
+
+    {{- if $installGroup }}
+    echo -e "\n${BLUE}▶ Checking group: [ {{ $group }} ]...${NC}"
+    
+    {{- range $package := $packages }}
+    # Check if package is already installed
+    if ! winget list --accept-source-agreements --exact --id "{{ $package }}" &>/dev/null; then
+        echo -e "${YELLOW}  ⚠ '{{ $package }}' is missing.${NC}"
+        read -p "$(echo -e "    Install it? [Y/n] ")" -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+            echo -e "    ⚙ Installing {{ $package }}..."
+            
+            # Error handling: Catch the exit code of winget
+            if winget install --accept-source-agreements --exact --id "{{ $package }}"; then
+                echo -e "${GREEN}    ✓ Successfully installed {{ $package }}${NC}"
+            else
+                echo -e "${RED}    ✗ Failed to install {{ $package }}. Moving to next package...${NC}"
+            fi
+        else
+            echo -e "${YELLOW}    ⊘ Skipped {{ $package }}${NC}"
+        fi
+    fi
+    {{- end }}
+    
+    {{- else }}
+    echo -e "\n${YELLOW}⏭ Skipping group: [ {{ $group }} ] (Disabled during 'chezmoi init')${NC}"
+    {{- end }}
+    {{- end }}
+fi
+{{- end }}
+
+{{- end -}}

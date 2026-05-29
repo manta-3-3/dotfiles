@@ -1,4 +1,4 @@
-{{- if eq .chezmoi.os "windows" -}}
+{{- if false -}}
 # packages.yaml hash: {{ include ".chezmoidata/packages.yaml" | sha256sum }}
 
 {{ if hasKey .packages.windows "winget" -}}
