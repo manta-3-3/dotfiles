@@ -1,0 +1,40 @@
+# --------------------------------- sources ---------------------------------:
+# Tmux Config: A Guide: https://builtin.com/articles/tmux-config
+# Make tmux Pretty and Usable: https://hamvocke.com/blog/a-guide-to-customizing-your-tmux-conf/
+
+# 1. Changing the Default Prefix
+#unbind C-Space
+#set -g prefix C-Space
+#bind C-Space send-prefix
+
+# 2. Mouse Usage
+#set -g mouse on
+
+# 3. Increase History
+set-option -g history-limit 10000
+
+# 4. Jump to a Marked Pane
+
+# 5. Numbering Windows and Panes
+
+# 6. More Intuitive Split Commands
+#bind | split-window -hc "#{pane_current_path}"
+#bind - split-window -vc "#{pane_current_path}"
+
+bind-key "|" split-window -h -c "#{pane_current_path}"
+bind-key "\\" split-window -fh -c "#{pane_current_path}"
+
+bind-key "-" split-window -v -c "#{pane_current_path}"
+bind-key "_" split-window -fv -c "#{pane_current_path}"
+
+# 7. Swapping Windows
+ 
+# 8. Keeping Current Path
+
+# 9. Toggling Windows and Sessions
+
+# 10. Resizing
+
+# 11. Breaking and Joining Panes
+
+# 12. Quick Pane Creation
