@@ -19,7 +19,7 @@
     git_name = {{ $git_name | quote }}
     git_email = {{ $git_email | quote }}
     is_headless = {{ $is_headless }}
-
+    
     # Subgroups to install
     install_terminal = {{ $install_terminal }}
     install_gui = {{ $install_gui }}
@@ -36,4 +36,10 @@
 {{- else }}
     command = "nano"
     args = []
+{{- end }}
+
+{{ if eq .chezmoi.os "windows" -}}
+[interpreters.sh]
+    command = "bash"
+    args = ["--login"]
 {{- end }}
