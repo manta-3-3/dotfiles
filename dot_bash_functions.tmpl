@@ -134,17 +134,17 @@ bcd() {
 
 # Searches using fd for files/folders names in the current directory or optinal other files/directories passed as further arguments
 fnd() {
-    fd --follow --list-details --hidden "$@"
+    fd --hidden --list-details --follow --full-path "$@"
 }
 
 # Searches using ripgrep for the given string in all files in current or optinal other files/directories passed as further arguments
 fstr() {
-    rg -I --smart-case --multiline --follow -e "$@"
+    rg --smart-case --multiline --follow -e "$@"
 }
 
 # ripgrep->fzf->(neo)vim [QUERY] (see: https://junegunn.github.io/fzf/tips/ripgrep-integration/)
 rfv() {
-  RELOAD='reload:rg --column --color=always --smart-case {q} || :'
+  RELOAD='reload:rg --column --color=always --multiline --smart-case {q} || :'
   OPENER='if [[ $FZF_SELECT_COUNT -eq 0 ]]; then
             nvim {1} +{2}     # No selection. Open the current line in Neovim.
           else

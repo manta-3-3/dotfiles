@@ -26,6 +26,7 @@ alias ping='ping -c 10'
 ## Morning Opertures
 alias whatsup='service --status-all'
 alias iad='systemctl is-active docker'
+alias ied='systemctl is-enabled docker'
 {{- if eq .chezmoi.os "windows" }}
 alias ports='netstat -ano'
 {{- else }}
@@ -33,8 +34,8 @@ alias ports='sudo ss -tulpn'
 {{- end }}
 alias scanme='nmap localhost'
 alias dns="sudo systemd-resolve --status | grep 'DNS Servers'"
-alias bye='sudo shutdown -r now'
-alias bye30='echo "Rebooting in 30 seconds... (Press Ctrl+C to cancel)"; sleep 30 && sudo shutdown -r now'
+alias bye='history -a && sudo shutdown -r now'
+alias bye30='echo "Rebooting in 30 seconds... (Press Ctrl+C to cancel)"; sleep 30 && history -a && sudo shutdown -r now'
 
 ## Usual Instructions
 alias c='clear'
@@ -46,11 +47,11 @@ alias wg='wget -c '
 ## Software Install
 
 {{- if eq .chezmoi.os "windows" }}
-### TODO: winget commands
+### winget commands
 alias pkm='winget'
 
 alias sup='winget upgrade --all'
-# TODO: add a command to upgrade specific package
+alias upp='winget upgrade'
 alias yep='winget install'
 alias nop='winget remove'
 
@@ -112,9 +113,10 @@ alias dfs='df -ahT --total'
 alias cntf='find . -type f | wc -l'
 alias cnta="find . -mindepth 1 -printf '%y\n' | sort | uniq -c | sed -E 's/ f$/ Files/; s/ d$/ Dirs/; s/ l$/ Links/; s/ p$/ Pipes/; s/ s$/ Sockets/; s/ c$/ CharDevs/; s/ b$/ BlockDevs/' | sort -n"
 
-### TODO: show directory structures in a hierarchical, tree-like format
-#alias treea='tree -CAhF --dirsfirst'
-#alias treed='tree -CAFd'
+### show directory structures in a hierarchical, tree-like format up to depth 3 using eza
+alias treea='eza --tree --level=3 --all --ignore-glob=".git|node_modules" --reverse --group-directories-last --long --git --icons --header --classify --smart-group --total-size'
+alias treed='eza --tree --level=3 --all --ignore-glob=".git|node_modules" --reverse --group-directories-last --long --git --icons --header --classify --smart-group --total-size --only-dirs'
+alias treef='eza --all --ignore-glob=".git|node_modules" --reverse --group-directories-last --long --git --icons --header --classify --smart-group --total-size --only-files'
 
 ### archiving and compressing
 alias mktar='tar -c -vf'
@@ -152,6 +154,8 @@ alias g='git'
 alias gs='git status'
 alias gb='git branch'
 alias gr='git remote -v'
+alias gd='git diff'
+alias gdh='git diff HEAD'
 
 ### Getting info from 'Git log'
 alias gl='git log --oneline'
@@ -208,7 +212,7 @@ alias tml='tmux ls'
 
 ### docker compose
 alias dco='docker compose'
-alias dcols='(cd /opt/dockge && docker compose ls -a)'
+alias dcols='(cd /opt/my-homelab/stacks/dockge && docker compose ls -a)'
 alias dcoc='docker compose config'
 alias dcou='docker compose up --build -d'
 alias dcol='docker compose logs'
@@ -229,7 +233,7 @@ alias skck='for key in id_ed25519 id_rsa id_ecdsa id_dsa; do [ -f ~/.ssh/$key ] 
 alias skg='ssh-keygen -t ed25519'
 alias skcp='ssh-copy-id'
 alias sks='ssh-add -l'
-alias skf='ssh-add -D && echo "All SSH-Keys removed."'
+alias skf='ssh-add -D && echo "All SSH keys loaded by the agent have been forgotten."'
 
 ### chezmoi
 alias cz='chezmoi'
