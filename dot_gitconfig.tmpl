@@ -4,6 +4,7 @@
 
 [core]
 	autocrlf = false
+	pager = delta
 {{- if eq .chezmoi.os "windows" }}
 	editor = "code --wait"
 {{- else }}
@@ -17,8 +18,17 @@
 	fsckobjects = true
 [rerere]
 	enabled = true
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true    # use n and N to move between diff sections
+	side-by-side = true
+	line-numbers = true
+[merge]
+	conflictStyle = zdiff3
 [diff]
 	algorithm = histogram
+	colorMoved = default
 [init]
 	defaultBranch = main
 [commit]
