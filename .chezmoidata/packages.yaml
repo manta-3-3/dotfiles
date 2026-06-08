@@ -15,8 +15,12 @@ packages:
         - "BurntSushi.ripgrep.MSVC"
         - "sharkdp.fd"
         - "sharkdp.bat"
+        - "eza-community.eza"
+        - "dandavison.delta"
         - "sxyazi.yazi"
         - "GitHub.cli"
+        - "tldr-pages.tlrc"
+        # thefuck install differently
         #- "jqlang.jq"
       gui:
         - "Spotify.Spotify"
@@ -104,11 +108,15 @@ packages:
         - ripgrep
         - fd-find
         - bat
+        - eza
+        - git-delta
         #- yazi
         - gh
         - ncal
         - translate-shell
         - numbat
+        # rust tldr client (tlrc) install differently
+        - thefuck
         #- jq
         #- pass
       gui:
@@ -130,6 +138,10 @@ packages:
         - audacity
         # VPN
 software-backlog:
+  - "trash-cli"
+  - "atuin (replaces your existing shell history with a SQLite database)"
+  - "navi (interactive cheatsheet tool for the command-line)"
+  - "Anki (learn flashcard program)"
   - "C Bonsai"
   - "Asciinema"
   - "Croc"
@@ -140,3 +152,4 @@ software-backlog:
   - "Lolcat"
   - "Faker"
   - "Grex"
+  - "Wireshark"

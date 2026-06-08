@@ -30,7 +30,7 @@ if command -v apt-get >/dev/null 2>&1; then
     
     {{- range $package := $packages }}
     # Check if package is already installed
-    if ! dpkg-query -W -f='${Status}' "{{ $package }}" 2>/dev/null | grep -q "ok installed"; then
+    if ! dpkg-query -W "{{ $package }}" >/dev/null 2>&1; then
         echo -e "${YELLOW}  ⚠ '{{ $package }}' is missing.${NC}"
         read -p "$(echo -e "    Install it? [Y/n] ")" -n 1 -r
         echo

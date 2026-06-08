@@ -30,7 +30,7 @@ if command -v winget >/dev/null 2>&1; then
     
     {{- range $package := $packages }}
     # Check if package is already installed
-    if ! winget list --accept-source-agreements --exact --id "{{ $package }}" &>/dev/null; then
+    if ! winget list --accept-source-agreements --exact --id "{{ $package }}" >/dev/null 2>&1; then
         echo -e "${YELLOW}  ⚠ '{{ $package }}' is missing.${NC}"
         read -p "$(echo -e "    Install it? [Y/n] ")" -n 1 -r
         echo
