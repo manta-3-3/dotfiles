@@ -219,7 +219,7 @@ fi
 # https://github.com/fastfetch-cli/fastfetch
 
 if command -v fastfetch >/dev/null 2>&1; then
-    fastfetch -c all.jsonc
+    fastfetch -c ~/.fastfetch-config.jsonc
 else
     echo -e "\e[33mWarning: fastfetch not installed!\e[0m" >&2
 fi
