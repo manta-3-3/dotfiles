@@ -17,16 +17,16 @@ echo -e "${CYAN}==========================================${NC}"
 
 {{- if eq .chezmoi.os "windows" }}
 
-# On Windows, the alacritty config file must be located elsewhere, create a symbolic link to it.
-alacritty_config_symlink() {
+# On Windows, some config files must be located elsewhere, create a symbolic link to it.
+config_symlink() {
     if ! command -v cmd >/dev/null 2>&1; then
         echo -e "${RED} Error: 'cmd' is not available! ${NC}"
         return 0
     fi
 
-    local target_dir="$APPDATA/alacritty/"
-    local target="$target_dir/alacritty.toml"
-    local source="$HOME/.alacritty.toml"
+    local target_dir="$1"
+    local target="$target_dir/$2"
+    local source="$3"
 
     if [ ! -f "$source" ]; then
         echo -e "${RED} Error: $source is not available! ${NC}"
@@ -48,7 +48,10 @@ alacritty_config_symlink() {
         echo -e "${RED} Error: Failed to create symlink at $target ${NC}"
     fi
 }
-alacritty_config_symlink
+
+config_symlink "$APPDATA/alacritty/" "alacritty.toml" "$HOME/.alacritty.toml"
+
+config_symlink "$USERPROFILE/AppData/Local/nvim/" "init.lua" "$HOME/.config/nvim/init.lua"
 
 {{- else if eq .chezmoi.os "linux" }}
 

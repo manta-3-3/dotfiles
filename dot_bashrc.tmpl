@@ -159,8 +159,14 @@ export HISTTIMEFORMAT="%d/%m/%y %T "
 export LANG=en_GB.UTF-8
 
 # Set the default editor
-export EDITOR=nano
-export VISUAL=nano
+
+if command -v nvim >/dev/null 2>&1; then
+    export EDITOR=nvim
+    export VISUAL=nvim
+else
+    export EDITOR=nano
+    export VISUAL=nano
+fi
 
 # To have colors for ls and all grep commands such as grep, egrep and zgrep
 export CLICOLOR=1
