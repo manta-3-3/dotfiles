@@ -3,11 +3,12 @@
 	email = {{ .git_email | quote }}
 
 [core]
-	autocrlf = false
 	pager = delta
 {{- if eq .chezmoi.os "windows" }}
+	autocrlf = true
 	editor = "code --wait"
 {{- else }}
+	autocrlf = input
 	editor = "nano"
 {{- end }}
 

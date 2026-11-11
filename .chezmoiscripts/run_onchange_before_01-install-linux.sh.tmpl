@@ -19,7 +19,9 @@ if command -v apt-get >/dev/null 2>&1; then
     echo -e "\n${CYAN}==========================================${NC}"
     echo -e "${CYAN}   Detected APT package manager (Linux)   ${NC}"
     echo -e "${CYAN}==========================================${NC}"
-    
+
+    sudo apt-get update
+
     {{- range $group, $packages := .packages.linux.apt }}
     {{- $configKey := printf "install_%s" $group }}
     {{- $installGroup := true }}
@@ -27,7 +29,7 @@ if command -v apt-get >/dev/null 2>&1; then
 
     {{- if $installGroup }}
     echo -e "\n${BLUE}▶ Checking group: [ {{ $group }} ]...${NC}"
-    
+
     {{- range $package := $packages }}
     # Check if package is already installed
     if ! dpkg-query -W "{{ $package }}" >/dev/null 2>&1; then
@@ -36,7 +38,7 @@ if command -v apt-get >/dev/null 2>&1; then
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
             echo -e "    ⚙ Installing {{ $package }}..."
-            
+
             # Error handling: Catch the exit code of apt-get
             if sudo apt-get install -y "{{ $package }}"; then
                 echo -e "${GREEN}    ✓ Successfully installed {{ $package }}${NC}"
@@ -48,7 +50,7 @@ if command -v apt-get >/dev/null 2>&1; then
         fi
     fi
     {{- end }}
-    
+
     {{- else }}
     echo -e "\n${YELLOW}⏭ Skipping group: [ {{ $group }} ] (Disabled during 'chezmoi init')${NC}"
     {{- end }}

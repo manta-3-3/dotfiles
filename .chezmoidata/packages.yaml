@@ -11,6 +11,7 @@ packages:
         - "Fastfetch-cli.Fastfetch"
         - "junegunn.fzf"
         - "ajeetdsouza.zoxide"
+        # thefuck install differently
         # Others
         - "BurntSushi.ripgrep.MSVC"
         - "sharkdp.fd"
@@ -20,13 +21,12 @@ packages:
         - "sxyazi.yazi"
         - "GitHub.cli"
         - "tldr-pages.tlrc"
-        # thefuck install differently
-        #- "jqlang.jq"
+        - "JesseDuffield.lazygit"
+        - "JesseDuffield.Lazydocker"
+        - "jqlang.jq"
       gui:
         - "Spotify.Spotify"
         - "DominikReichl.KeePass"
-        - "Mozilla.Thunderbird"
-        - "cjpais.Handy"
         # Terminal emulators / Multiplexers
         - "Alacritty.Alacritty"
         - "Microsoft.WindowsTerminal"
@@ -35,10 +35,14 @@ packages:
         # Productivity / Notes
         - "Notion.Notion"
         - "Obsidian.Obsidian"
+        - "JohannesMillan.superProductivity"
         # Browsers
         - "Mozilla.Firefox"
         - "Google.Chrome"
         - "Brave.Brave"
+        - "Zen-Team.Zen-Browser"
+        # E-Mail
+        - "Mozilla.Thunderbird"
         # Text editors
         - "Microsoft.VisualStudioCode"
         - "Notepad++.Notepad++"
@@ -56,9 +60,19 @@ packages:
         # Recording
         - "OBSProject.OBSStudio"
         - "Audacity.Audacity"
-        # VPN
+        # VPN/Remote
         - "Tailscale.Tailscale"
         - "OpenVPNTechnologies.OpenVPNConnect"
+        # AI tools
+        - "cjpais.Handy"
+        - "Google.Antigravity"
+        - "Google.AntigravityIDE"
+        - "Google.AntigravityCLI"
+        - "Google.GeminiDesktop"
+        - "OpenAI.ChatGPT"
+        - "OpenAI.Codex"
+        - "Anthropic.Claude"
+        - "Anthropic.ClaudeCode"
       peripherals:
         - "TurtleBeach.ROCCATSwarm"
       gaming:
@@ -104,29 +118,31 @@ packages:
         - fastfetch
         - fzf
         - zoxide
+        - thefuck
         # Others
         - ripgrep
         - fd-find
         - bat
         - eza
         - git-delta
-        #- yazi
+        # yazi install differently
         - gh
         - ncal
         - translate-shell
         - numbat
         # rust tldr client (tlrc) install differently
-        - thefuck
-        #- jq
-        #- pass
+        - lazygit
+        # lazydocker install differently
+        - jq
       gui:
-        - thunderbird
         # Terminal emulators / Multiplexers
         - alacritty
         # Productivity / Notes
         # Browsers
         - firefox
         # brave-browser install differently
+        # E-Mail
+        - thunderbird
         # Text editors
         # Image/video editors
         - gimp
@@ -136,12 +152,25 @@ packages:
         - vlc
         # Recording
         - audacity
-        # VPN
+        # VPN/Remote
+        # AI tools
 software-backlog:
+  - "Node.js"
   - "trash-cli"
+  - "dua-cli (View disk space usage and delete unwanted data, fast)"
+  - "taskwarrior (Command line Task Management)"
+  - "nb (command line and local web note‑taking, bookmarking, archiving, and knowledge base application)"
+  - "pass (the standard unix password manager)"
   - "atuin (replaces your existing shell history with a SQLite database)"
   - "navi (interactive cheatsheet tool for the command-line)"
+  - "commitizen (Create committing rules for projects)"
+  - "commitlint (Lint commit messages)"
   - "Anki (learn flashcard program)"
+  - "OpenCode (Open-source agent TUI)"
+  - "oh-my-pi (AI Coding agent for the terminal)"
+  - "T3Code (The open-source control plane for coding agents)"
+  - "cliamp (Terminal music player inspired by winamp)"
+  - "herdr (like tmux for agents, the runtime your coding agents live on)"
   - "C Bonsai"
   - "Asciinema"
   - "Croc"
@@ -153,3 +182,4 @@ software-backlog:
   - "Faker"
   - "Grex"
   - "Wireshark"
+  - "shellcheck"

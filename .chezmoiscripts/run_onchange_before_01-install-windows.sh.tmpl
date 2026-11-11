@@ -19,7 +19,7 @@ if command -v winget >/dev/null 2>&1; then
     echo -e "\n${CYAN}==========================================${NC}"
     echo -e "${CYAN}   Detected Winget package manager (Windows)   ${NC}"
     echo -e "${CYAN}==========================================${NC}"
-    
+
     {{- range $group, $packages := .packages.windows.winget }}
     {{- $configKey := printf "install_%s" $group }}
     {{- $installGroup := true }}
@@ -27,7 +27,7 @@ if command -v winget >/dev/null 2>&1; then
 
     {{- if $installGroup }}
     echo -e "\n${BLUE}▶ Checking group: [ {{ $group }} ]...${NC}"
-    
+
     {{- range $package := $packages }}
     # Check if package is already installed
     if ! winget list --accept-source-agreements --exact --id "{{ $package }}" >/dev/null 2>&1; then
@@ -36,9 +36,9 @@ if command -v winget >/dev/null 2>&1; then
         echo
         if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
             echo -e "    ⚙ Installing {{ $package }}..."
-            
+
             # Error handling: Catch the exit code of winget
-            if winget install --accept-source-agreements --exact --id "{{ $package }}"; then
+            if winget install --accept-source-agreements --accept-package-agreements --exact --id "{{ $package }}"; then
                 echo -e "${GREEN}    ✓ Successfully installed {{ $package }}${NC}"
             else
                 echo -e "${RED}    ✗ Failed to install {{ $package }}. Moving to next package...${NC}"
@@ -48,7 +48,7 @@ if command -v winget >/dev/null 2>&1; then
         fi
     fi
     {{- end }}
-    
+
     {{- else }}
     echo -e "\n${YELLOW}⏭ Skipping group: [ {{ $group }} ] (Disabled during 'chezmoi init')${NC}"
     {{- end }}
